@@ -11,9 +11,12 @@
     "url": "git+https://github.com/samudurand/carless-hiker-blog-lambda.git"
   },
   "author": "samudurand@gmail.com",
-  "license": "MIT",
+  "license": "GPL3",
   "bugs": {
     "url": "https://github.com/samudurand/carless-hiker-blog-lambda/issues"
   },
-  "homepage": "https://github.com/samudurand/carless-hiker-blog-lambda#readme"
+  "homepage": "https://github.com/samudurand/carless-hiker-blog-lambda#readme",
+  "dependencies": {
+    "winston": "^3.2.1"
+  }
 }

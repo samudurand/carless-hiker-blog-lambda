@@ -11,6 +11,7 @@ test('extract github name', () => {
 });
 
 test('extract url from rss update message', async () => {
+    process.env.REGION = 'eu-west-2';
     const result = await index.handler(xmlBodyJson, null);
     expect(result).toBe('empty body');
 });

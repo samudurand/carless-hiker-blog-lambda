@@ -56,6 +56,25 @@ const getImageUrls = async (postGithubRepoName) => {
         .map(name => postsDirectRepoGithubURL + postGithubRepoName + '/' + name);
 };
 
+const publishMessage = async (msg) => {
+    const topic_arn = process.env.SNS_TOPIC_ARN;
+    aws.config.update({region: process.env.REGION});
+
+    const params = {
+        Message: JSON.stringify(msg),
+        TopicArn: topic_arn
+    };
+
+    const sns = new aws.SNS();
+    try {
+        const result = await sns.publish(params).promise();
+        console.log("SNS Message ID is " + data.MessageId);
+    } catch (err) {
+        console.error(err, err.stack);
+        throw err;
+    }
+};
+
 exports.handler = async (event, context) => {
 
     const rssUpdateContent = JSON.parse(convert.xml2json(event.body, {compact: true, spaces: 2}));
@@ -63,12 +82,12 @@ exports.handler = async (event, context) => {
     const postGithubRepoName = extractGithubName(linkToPost);
     const imageUrls = await getImageUrls(postGithubRepoName);
 
-    const result = {
+    const message = {
         "linkToPost": linkToPost,
         "imageUrls": imageUrls
     };
 
-    console.log(result);
+    await publishMessage(message);
 
     return  {
         "statusCode": 200,

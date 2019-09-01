@@ -96,7 +96,7 @@ exports.handler = async (event, context) => {
         "headers": {
             "Content-Type": "application/json"
         },
-        "body": JSON.stringify(result),
+        "body": JSON.stringify(message),
         "isBase64Encoded": false
     };
 };

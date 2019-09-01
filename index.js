@@ -70,6 +70,7 @@ const publishMessage = async (msg) => {
         const result = await sns.publish(params).promise();
         console.log('Successfully published message: \n' + JSON.stringify(params, null, 4));
         console.log("SNS Message ID is " + result.MessageId);
+        return result;
     } catch (err) {
         console.error(err, err.stack);
         throw err;

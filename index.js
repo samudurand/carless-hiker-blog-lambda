@@ -68,7 +68,8 @@ const publishMessage = async (msg) => {
     const sns = new aws.SNS();
     try {
         const result = await sns.publish(params).promise();
-        console.log("SNS Message ID is " + data.MessageId);
+        console.log('Successfully published message: \n' + JSON.stringify(params, null, 4));
+        console.log("SNS Message ID is " + result.MessageId);
     } catch (err) {
         console.error(err, err.stack);
         throw err;

@@ -17,9 +17,13 @@
   },
   "homepage": "https://github.com/samudurand/carless-hiker-blog-lambda#readme",
   "dependencies": {
-    "winston": "^3.2.1"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "winston": "^3.2.1",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "rewire": "^4.0.1"
   }
 }

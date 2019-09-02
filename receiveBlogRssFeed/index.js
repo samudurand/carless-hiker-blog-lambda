@@ -1,10 +1,7 @@
 const convert = require('xml-js');
-const fs = require('fs');
 const util = require('util');
 const request = require("request-promise");
 const aws = require("aws-sdk");
-
-const readdir = util.promisify(fs.readdir);
 
 // Used to browse the github api trees and list the images
 const postsApiRepoGithubURL = 'https://api.github.com/repos/samudurand/carless-hiker-blog/git/trees/cf1db899423cdbff064210ecd8f9d0564a4d2ff1';

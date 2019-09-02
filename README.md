@@ -12,6 +12,7 @@ $ npm install node-lambda -g
 Then use the following commands, the first to package the code into a zip file, and the next to push the changes to aws:
 
 ```bash
-$ node-lambda package
+$ cd `function_name`
+$ node-lambda package --functionName `function_name`
 $ aws lambda update-function-code --function-name receiveBlogRssFeed --zip-file fileb://./build/carless-hiker-blog-lambda-development.zip --profile perso
 ```

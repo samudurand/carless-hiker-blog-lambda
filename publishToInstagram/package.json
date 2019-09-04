@@ -4,7 +4,9 @@
   "description": "Manages automatic extractions of pictures out of new blog posts and send them to instagram, twitter and facebook",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "preinstall": "npm rm sharp --save",
+    "postinstall": "npm i sharp --arch=x64 --platform=linux --save"
   },
   "repository": {
     "type": "git",

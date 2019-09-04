@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/samudurand/carless-hiker-blog-lambda#readme",
   "dependencies": {
+    "instagram-private-api": "^1.27.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "winston": "^3.2.1"

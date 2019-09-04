@@ -6,7 +6,7 @@ const indexInternal = rewire('../index.js');
 const extractGithubName = indexInternal.__get__('extractGithubName');
 
 test('extract github name', () => {
-    const name = extractGithubName("http://the-carless-hiker.com/2019/08/18/darwen-tower-to-sunnyhurst-brook/")
+    const name = extractGithubName("http://the-carless-hiker.com/2019/08/18/darwen-tower-to-sunnyhurst-brook/");
     expect(name).toBe('2019-08-18-darwen-tower-to-sunnyhurst-brook');
 });
 

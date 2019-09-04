@@ -1,8 +1,35 @@
 const instaApi = require('instagram-private-api');
 const request = require("request-promise");
+const sharp = require('sharp');
+
+const getAndResizeImages = async (imageUrls) => {
+    const images = [];
+    for (let i=0; i < imageUrls.length; i++) {
+        const imageContent = await request.get({
+            url: imageUrls[i],
+            encoding: null, // this is required
+        });
+
+        const imageBuffer = Buffer.from(imageContent, 'binary');
+
+        const imageResized = await sharp(imageBuffer)
+            .resize({height: 800})
+            .resize({
+                width: 800,
+                height: 800,
+                fit: sharp.fit.cover
+            })
+            .toBuffer();
+
+        images[i] = {
+            file: imageResized
+        }
+    }
+    return images;
+};
 
 const getRandomElements = function(sourceArray, neededElements) {
-    var result = [];
+    const result = [];
     for (var i = 0; i < neededElements; i++) {
         var index = Math.floor(Math.random() * sourceArray.length);
         result.push(sourceArray[index]);
@@ -11,7 +38,7 @@ const getRandomElements = function(sourceArray, neededElements) {
     return result;
 };
 
-const sendToInstagram = async (imageUrls, linkToPost) => {
+const sendToInstagram = async (images, linkToPost) => {
     const ig = new instaApi.IgApiClient();
     ig.state.generateDevice(process.env.IG_USERNAME);
 
@@ -19,28 +46,13 @@ const sendToInstagram = async (imageUrls, linkToPost) => {
     const auth = await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
     console.info('Authentication successful!');
 
-    const images = [];
-    for (i=0; i < imageUrls.length; i++) {
-        const imageContent = await request.get({
-            url: imageUrls[0], // random picture with 800x800 size
-            encoding: null, // this is required
-        });
-        images[i] = {
-            file: Buffer.from(imageContent, 'binary')
-        };
-    }
-
-    console.log('Sending album to Instagram...');
-    // const publishResult = await ig.publish.photo({
-    //     file: imageBuffer, // image buffer, you also can specify image from your disk using fs
-    //     caption: 'Debug post, ignore it I am doing some tests ^^'
-    // });
+    console.info('Sending album to Instagram...');
     const publishResult = await ig.publish.album({
-        items: images, // image buffer, you also can specify image from your disk using fs
-        caption: `A new hike to checkout! Click here to see more ${linkToPost}`
+        items: images, // images buffers
+        caption: `A new hike to checkout! Check my blog to know more (link in my profile).`
     });
-    console.log(publishResult); // publishResult.status should be "ok"
-    console.log('Sending successful!');
+    console.info(publishResult); // publishResult.status should be "ok"
+    console.info('Sending successful!');
 };
 
 exports.handler = async (event, context) => {
@@ -49,14 +61,22 @@ exports.handler = async (event, context) => {
     const message = JSON.parse(event.Records[0].Sns.Message);
     console.info("Extracted message: \n" + JSON.stringify(message, null, 2));
 
+    let numberToPost = 5;
     // Get the cover image, if it exists
     const coverUrl = message.imageUrls.find((url) => url.includes('/cover.'));
-    const imagesUrlsWithoutCover = message.imageUrls.filter((value, index, arr) => value === coverUrl);
-    // Limit the number of remaining images, and take a random 4 of them
-    const imagesUrlsSelection = imagesUrlsWithoutCover.length <= 4 ? imageUrls : getRandomElements(imageUrls, 4);
-    imagesUrlsSelection.unshift(coverUrl);
+    if (coverUrl) {
+        numberToPost -= 1;
+    }
 
-    await sendToInstagram(imagesUrlsSelection, message.linkToPost);
+    const imagesUrlsWithoutCover = message.imageUrls.filter((value, index, arr) => value !== coverUrl);
+    // Limit the number of remaining images, and take a random 4 of them
+    const imagesUrlsSelection = imagesUrlsWithoutCover.length <= numberToPost ? imagesUrlsWithoutCover : getRandomElements(imagesUrlsWithoutCover, numberToPost);
+
+    // Add the cover image, if it exists
+    if (coverUrl) {imagesUrlsSelection.unshift(coverUrl);}
+
+    const images = await getAndResizeImages(imagesUrlsSelection);
+    await sendToInstagram(images, message.linkToPost);
 
     return "Successfully sent to Instagram";
 };

@@ -13,6 +13,6 @@ Then use the following commands, the first to package the code into a zip file, 
 
 ```bash
 $ cd `function_name`
-$ node-lambda package --functionName `function_name`
-$ aws lambda update-function-code --function-name `function_name` --zip-file fileb://./build/`function_name`-development.zip --profile perso
+$ node-lambda package --functionName functionName
+$ aws lambda update-function-code --function-name functionName --zip-file fileb://./build/functionName-development.zip --profile perso
 ```

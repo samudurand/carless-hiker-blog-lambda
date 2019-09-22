@@ -1,6 +1,8 @@
 const instaApi = require('instagram-private-api');
 
-exports.sendToInstagram = async (images) => {
+const hashtags = "#hike #hiker #hiking #nature #landscapephotography #walks #explorer";
+
+exports.sendToInstagram = async (description, images) => {
     const ig = new instaApi.IgApiClient();
     ig.state.generateDevice(process.env.IG_USERNAME);
 
@@ -11,7 +13,7 @@ exports.sendToInstagram = async (images) => {
     console.info('Sending album to Instagram...');
     const publishResult = await ig.publish.album({
         items: images, // images buffers
-        caption: `A new hike to checkout! Check my blog to know more (link in my profile).`
+        caption: `${description} \n Check my blog for details and maps (link in my profile)! ${hashtags}`
     });
     console.info(publishResult); // publishResult.status should be "ok"
 

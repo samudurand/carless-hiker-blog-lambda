@@ -1,4 +1,3 @@
-const sharp = require('sharp');
 const request = require("request-promise");
 
 exports.downloadAndResizeImages = async (imageUrls) => {
@@ -9,20 +8,7 @@ exports.downloadAndResizeImages = async (imageUrls) => {
             encoding: null, // this is required
         });
 
-        const imageBuffer = Buffer.from(imageContent, 'binary');
-
-        const imageResized = await sharp(imageBuffer)
-            .resize({height: 800})
-            .resize({
-                width: 800,
-                height: 800,
-                fit: sharp.fit.cover
-            })
-            .toBuffer();
-
-        images[i] = {
-            file: imageResized
-        }
+        images[i] = Buffer.from(imageContent, 'binary');
     }
     return images;
 };

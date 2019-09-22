@@ -5,7 +5,7 @@ exports.handler = async (event, context) => {
     console.info("Received notification: \n" + JSON.stringify(event, null, 2));
     const message = JSON.parse(event.Records[0].Sns.Message);
 
-    let numberToPost = 5;
+    let numberToPost = 4; // Max number of media by tweet
     // Get the cover image, if it exists
     const coverUrl = message.imageUrls.find((url) => url.includes('/cover.'));
     if (coverUrl) {
@@ -20,7 +20,10 @@ exports.handler = async (event, context) => {
     if (coverUrl) {imagesUrlsSelection.unshift(coverUrl);}
 
     const images = await downloadAndResizeImages(imagesUrlsSelection);
-    await sendToTwitter(images, message.linkToPost);
+
+    const maxTextLength = 250;  // To be sure to fit twitter limits
+    const description = message.description.length > maxTextLength ? message.description.substring(0, maxTextLength - 3) + "..." : message.description;
+    await sendToTwitter(description, images, message.linkToPost);
 
     return "Successfully sent to Twitter";
 };

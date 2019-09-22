@@ -19,8 +19,13 @@ exports.handler = async (event, context) => {
     // Add the cover image, if it exists
     if (coverUrl) {imagesUrlsSelection.unshift(coverUrl);}
 
+    console.info("Dowloading images...");
     const images = await downloadAndResizeImages(imagesUrlsSelection);
-    await sendToInstagram(images, message.linkToPost);
+    console.info("Images downloaded");
+    console.info("Sending to Instagram");
 
+    const maxTextLength = 1900; // To be sure to fit Instagram limits with the hashtags on top
+    const description = message.description.length > maxTextLength ? message.description.substring(0, maxTextLength - 3) + "..." : message.description;
+    await sendToInstagram(description, images);
     return "Successfully sent to Instagram";
 };

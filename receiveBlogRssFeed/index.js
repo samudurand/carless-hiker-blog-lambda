@@ -74,18 +74,27 @@ const publishMessage = async (msg) => {
     }
 };
 
+function getDescription(body) {
+    const paragraphs = body.split('<p>');
+    const description = paragraphs[paragraphs.length - 2];
+    return description.replace("</p>", "");
+}
+
 exports.handler = async (event, context) => {
 
     const rssUpdateContent = JSON.parse(convert.xml2json(event.body, {compact: true, spaces: 2}));
+    const rssBodyContent = rssUpdateContent.feed.entry.summary._text;
     const linkToPost = rssUpdateContent.feed.entry.link._attributes.href;
     const postGithubRepoName = extractGithubName(linkToPost);
     const imageUrls = await getImageUrls(postGithubRepoName);
-
+    const description = getDescription(rssBodyContent);
     const message = {
         "linkToPost": linkToPost,
-        "imageUrls": imageUrls
+        "imageUrls": imageUrls,
+        "description": description
     };
 
+    console.info("Message to send " + JSON.stringify(message));
     await publishMessage(message);
 
     return  {
